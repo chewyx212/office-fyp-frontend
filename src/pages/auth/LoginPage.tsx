@@ -45,43 +45,59 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<Inputs> = async (form) => {
     setIsSubmitting(true);
     const payload: LoginForm = {
-      input: form.login_credential,
+      email: form.login_credential,
       password: form.password,
     };
-    const { data } = await authApi.userLogin(payload);
-    console.log(data);
-    if (data.status === 702) {
-      if (data.response.length > 0) {
-        dispatch(login({ token: data.response[1], user: data.response[0] }));
-    setIsSubmitting(false);
+    const result = await authApi.userLogin(payload);
+    if (result.status === 201) {
+      console.log(result.data);
+      dispatch(login({ token: result.data.token, user: result.data.user }));
+      setIsSubmitting(false);
 
-        history.push("/");
-      }
-    } else if (data.status === 703) {
-    setIsSubmitting(false);
+      history.push("/");
+    }
+    if (result.status === 401) {
       toast({
-        title: data.message,
-        status: "warning",
-        duration: 9000,
-        isClosable: true,
-      });
-    } else if (data.status === 701) {
-    setIsSubmitting(false);
-      toast({
-        title: data.message,
-        status: "warning",
-        duration: 9000,
-        isClosable: true,
-      });
-    } else {
-    setIsSubmitting(false);
-      toast({
-        title: "Something wrong, Try again later",
+        title: "Login Failed.",
+        description: "Please check your login credential again.",
         status: "warning",
         duration: 9000,
         isClosable: true,
       });
     }
+    // if (data.status === 702) {
+    //   if (data.response.length > 0) {
+    //     dispatch(login({ token: data.response[1], user: data.response[0] }));
+    //     setIsSubmitting(false);
+
+    //     history.push("/");
+    //   }
+    // } else if (data.status === 703) {
+    //   setIsSubmitting(false);
+    //   toast({
+    //     title: data.message,
+    //     status: "warning",
+    //     duration: 9000,
+    //     isClosable: true,
+    //   });
+    // }
+    // } else if (data.status === 701) {
+    //   setIsSubmitting(false);
+    //   toast({
+    //     title: data.message,
+    //     status: "warning",
+    //     duration: 9000,
+    //     isClosable: true,
+    //   });
+    // } else {
+    //   setIsSubmitting(false);
+    //   toast({
+    //     title: "Something wrong, Try again later",
+    //     status: "warning",
+    //     duration: 9000,
+    //     isClosable: true,
+    //   });
+    // }
     setIsSubmitting(false);
   };
 
@@ -126,20 +142,17 @@ const LoginPage = () => {
             fontWeight="bold"
             fontSize="16px"
           >
-            Enter your username or email and password to sign in.
+            Enter your email and password to sign in.
           </Text>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl>
-              {/* <FormLabel mt="10px" ms="4px" fontSize="sm" fontWeight="normal">
-                Phone Number
-              </FormLabel> */}
               <Input
                 id="login_credential"
                 borderRadius="15px"
                 fontSize="sm"
                 my="5px"
                 type="text"
-                placeholder="Your username or email"
+                placeholder="Your email"
                 size="lg"
                 {...register("login_credential", { required: true })}
               />
@@ -148,9 +161,6 @@ const LoginPage = () => {
                   This field is required
                 </FormHelperText>
               )}
-              {/* <FormLabel mt="10px" ms="4px" fontSize="sm" fontWeight="normal">
-                Password
-              </FormLabel> */}
 
               <InputGroup my="5px" size="lg">
                 <Input

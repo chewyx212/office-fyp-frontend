@@ -1,14 +1,11 @@
 export interface RegisterForm {
   name: string;
-  phone_number: string;
   email: string;
-  username: string;
   password: string;
-  pin: string;
 }
 
 export interface LoginForm {
-  input: string;
+  email: string;
   password: string;
 }
 
@@ -17,5 +14,4 @@ export interface UserInfoType {
   name: string;
   email: string;
   phone_number: string;
-  username: string;
 }

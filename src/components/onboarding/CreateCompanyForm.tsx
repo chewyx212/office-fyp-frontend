@@ -26,13 +26,6 @@ import {
 } from "@chakra-ui/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
-import { FileWithPath, useDropzone } from "react-dropzone";
-import {
-  ArrowBackIcon,
-  ArrowForwardIcon,
-  CheckCircleIcon,
-  EmailIcon,
-} from "@chakra-ui/icons";
 import { useHistory } from "react-router";
 import FileUploader from "components/FileUploader/FileUploader";
 import { FiCamera } from "react-icons/fi";
@@ -41,20 +34,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { CreateCompanyType } from "types/CompanyType";
 import { useAppDispatch } from "app/hooks";
 import { logout } from "app/auth/authSlice";
-import { CountryCodeType } from "types/CommonType";
-
-const content = <Flex py={4}>a</Flex>;
-type CategoryType = {
-  id: number;
-  name: string;
-  description: string;
-};
-type SubCategory = {
-  id: number;
-  name: string;
-  description: string;
-  parent_id: number;
-};
 
 type IProps = {
   submitForm: Function;
@@ -64,15 +43,6 @@ const CreateCompanyForm: React.FC<IProps> = ({ submitForm, gotCompany }) => {
   let cardColor = useColorModeValue("white", "gray.700");
 
   const history = useHistory();
-
-  const avatarRef = useRef<any>(null);
-
-  const [file, setFile] = useState(null);
-  const [companyCategory, setCompanyCategory] = useState<SubCategory[]>([]);
-  const [companyType, setCompanyType] = useState<CategoryType[]>([]);
-  const [countryList, setCountryList] = useState<CountryCodeType[]>([]);
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string>("");
-  const [selectedType, setSelectedType] = useState<string>("");
   const dispatch = useAppDispatch();
   const {
     handleSubmit,
@@ -83,57 +53,27 @@ const CreateCompanyForm: React.FC<IProps> = ({ submitForm, gotCompany }) => {
     getCompany();
   }, []);
 
-  const getCategoryAndCountryList = async () => {
-    const { data } = await CompanyApi.getCategoryAndCategory();
-    console.log(data);
-    if (data.status === 0) {
-      if (data.response.categories && data.response.types.length > 0) {
-        setCompanyType(data.response.types);
-      }
-      if (data.response.categories && data.response.categories.length > 0) {
-        setCompanyCategory(data.response.categories);
-      }
-      if (data.response.countries && data.response.countries.length > 0) {
-        setSelectedCountryCode(data.response.countries[0].calling_code);
-        setCountryList(data.response.countries);
-      }
-    }
-  };
+  const companyType: { id: number; name: string }[] = [
+    { id: 1, name: "1 - 20" },
+    { id: 2, name: "21 - 50" },
+    { id: 3, name: "51 - 100" },
+    { id: 4, name: "101 - 300" },
+    { id: 5, name: "301 - 500" },
+    { id: 6, name: "500 - 1000" },
+    { id: 7, name: "More than 1000" },
+  ];
 
   const getCompany = async () => {
     const result = await CompanyApi.getCompanyDetail();
-    if (result.data.status === 0 && result.data.response) {
-      gotCompany(result.data.response);
+    if (result.status === 200 && result.data.name) {
+      gotCompany(result.data);
     } else if (result.status === 401) {
       dispatch(logout());
-    } else {
-      getCategoryAndCountryList();
     }
-  };
-
-  const handleCountryChange = (value: string) => {
-    let temp = countryList.find((country) => country.id === parseInt(value));
-    if (temp) {
-      setSelectedCountryCode(temp.calling_code);
-    }
-  };
-
-  const onSelectCompanyType = (value: string) => {
-    setSelectedType(value);
-    console.log(value)
   };
 
   const onSubmit: SubmitHandler<CreateCompanyType> = async (form) => {
-    console.log(form);
-    const payload: CreateCompanyType = {
-      ...form,
-      whats_app: form.whats_app ? "https://wa.me/" + form.whats_app : "",
-      instagram: form.instagram
-        ? "https://instagram.com/" + form.instagram
-        : "",
-      facebook: form.facebook ? "https://facebook.com/" + form.facebook : "",
-    };
-    submitForm(payload);
+    submitForm(form);
   };
   return (
     <Box
@@ -150,26 +90,6 @@ const CreateCompanyForm: React.FC<IProps> = ({ submitForm, gotCompany }) => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl>
-          <Flex justifyContent="center">
-            <Avatar w="100px" h="100px">
-              <AvatarBadge
-                cursor="pointer"
-                borderWidth="0.5px"
-                borderColor="gray.200"
-                boxSize="2em"
-                bg="white"
-                // onClick={() => { avatarRef.current.click() }}
-              >
-                {/* <Input 
-                  type="file" 
-                  display="none" 
-                  ref={avatarRef}  
-                /> */}
-                <Icon as={FiCamera} color="grey" />
-              </AvatarBadge>
-            </Avatar>
-          </Flex>
-
           <SimpleGrid mt="10" columns={{ base: 1, md: 2 }} spacing={10}>
             <Box>
               <FormLabel>Company Name</FormLabel>
@@ -208,165 +128,24 @@ const CreateCompanyForm: React.FC<IProps> = ({ submitForm, gotCompany }) => {
             </Box>
             {companyType.length > 0 && (
               <Box>
-                <FormLabel>Company Type</FormLabel>
+                <FormLabel>Company Size</FormLabel>
                 <Select
                   borderRadius="15px"
                   fontSize="sm"
                   mb="5"
                   size="lg"
                   placeholder="Select Company Type"
-                  {...register("type_id", { required: true })}
-                  onChange={(e) => onSelectCompanyType(e.target.value)}
+                  {...register("size", { required: true })}
                 >
                   {companyType.map((type) => (
-                    <option key={type.id} value={type.id}>
+                    <option key={type.id} value={type.name}>
                       {type.name}
                     </option>
                   ))}
                 </Select>
               </Box>
             )}
-
-            {companyCategory.find(
-              (type) => type.parent_id === parseInt(selectedType)
-            ) && (
-              <Box>
-                <FormLabel>Company Category</FormLabel>
-                <Select
-                  borderRadius="15px"
-                  fontSize="sm"
-                  mb="5"
-                  size="lg"
-                  placeholder="Select Company Category"
-                  {...register("category_id")}
-                  disabled={!selectedType}
-                >
-                  {companyCategory.map((category) => {
-                    if (category.parent_id === parseInt(selectedType)) {
-                      return (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      );
-                    }
-                  })}
-                </Select>
-                {errors.category_id && (
-                  <FormHelperText mt="0" color="red.500">
-                    This field is required
-                  </FormHelperText>
-                )}
-              </Box>
-            )}
-
-            <Box>
-              <FormLabel>Country</FormLabel>
-              <Select
-                borderRadius="15px"
-                fontSize="sm"
-                mb="5"
-                size="lg"
-                placeholder="Select Country / Region"
-                {...register("country_id", { required: true })}
-                onChange={(e) => handleCountryChange(e.target.value)}
-              >
-                {countryList.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
-                  </option>
-                ))}
-              </Select>
-              {errors.country_id && (
-                <FormHelperText mt="0" color="red.500">
-                  This field is required
-                </FormHelperText>
-              )}
-            </Box>
-            <Box>
-              <FormLabel>Phone Number</FormLabel>
-
-              <InputGroup size="lg">
-                <InputLeftAddon
-                  children={selectedCountryCode}
-                  fontSize="sm"
-                  borderRadius="15px"
-                />
-                <Input
-                  borderRadius="15px"
-                  fontSize="sm"
-                  mb="5px"
-                  type="number"
-                  placeholder="Company Phone Number"
-                  {...register("phone_number", {
-                    required: true,
-                    pattern: /^(0?1)[02-46-9]-*[0-9]{7}$|^(0?1)[1]-*[0-9]{8}$/,
-                  })}
-                />
-              </InputGroup>
-              {errors.phone_number && (
-                <FormHelperText mt="0" color="red.500">
-                  Please enter a valid phone number.
-                </FormHelperText>
-              )}
-            </Box>
           </SimpleGrid>
-
-          <Box mt="40px">
-            <FormLabel>WhatsApp</FormLabel>
-            <InputGroup size="lg">
-              <InputLeftAddon
-                children="https://wa.me/"
-                fontSize="sm"
-                borderRadius="15px"
-              />
-              <Input
-                borderRadius="15px"
-                fontSize="sm"
-                mb="5px"
-                type="text"
-                placeholder="WhatsApp"
-                {...register("whats_app")}
-              />
-            </InputGroup>
-          </Box>
-
-          <Box mt="40px">
-            <FormLabel>Facebook</FormLabel>
-            <InputGroup size="lg">
-              <InputLeftAddon
-                children="https://facebook.com/"
-                fontSize="sm"
-                borderRadius="15px"
-              />
-              <Input
-                borderRadius="15px"
-                fontSize="sm"
-                mb="5px"
-                type="text"
-                placeholder="Facebook"
-                {...register("facebook")}
-              />
-            </InputGroup>
-          </Box>
-
-          <Box mt="40px">
-            <FormLabel>Instagram</FormLabel>
-            <InputGroup size="lg">
-              <InputLeftAddon
-                children="https://instagram.com/"
-                fontSize="sm"
-                borderRadius="15px"
-              />
-              <Input
-                borderRadius="15px"
-                fontSize="sm"
-                mb="5px"
-                type="text"
-                placeholder="Instagram"
-                {...register("instagram")}
-              />
-            </InputGroup>
-          </Box>
         </FormControl>
         <Button
           fontSize="16px"

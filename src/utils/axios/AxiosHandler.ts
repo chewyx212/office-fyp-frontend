@@ -30,7 +30,6 @@ axios.interceptors.response.use(
     return response;
   },
   async function (error) {
-    const originalRequest = error.config;
 
     // console.log("Error", JSON.stringify(error))
     

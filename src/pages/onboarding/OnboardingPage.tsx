@@ -1,4 +1,3 @@
-
 import {
   Flex,
   Text,
@@ -14,7 +13,6 @@ import {
 } from "@chakra-ui/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import React, { useState } from "react";
-import Pricing from "components/Pricing/Pricing";
 import { useHistory } from "react-router";
 import CreateCompanyForm from "components/onboarding/CreateCompanyForm";
 import { CompanyApi } from "api/CompanyApi";
@@ -25,63 +23,48 @@ import MarketIntegration from "components/onboarding/MarketIntegration";
 
 const content = <Flex py={4}>a</Flex>;
 
-
 const OnboardingPage = () => {
- 
-
   const history = useHistory();
   const { nextStep, prevStep, reset, activeStep } = useSteps({
     initialStep: 0,
   });
 
-  const [file, setFile] = useState(null);
   const dispatch = useAppDispatch();
 
   const OnSubmitCreateCompany = async (payload: CreateCompanyType) => {
-    const { data } = await CompanyApi.postCreateCompany(payload);
-    console.log(data);
-    if (data.status === 0) {
+    const result = await CompanyApi.postCreateCompany(payload);
+    if (result.status === 201) {
       const company: CompanyState = {
-        category_id: data.response.category_id,
-        id: data.response.id,
-        country_id: data.response.country_id,
-        email: data.response.email,
-        facebook: data.response.facebook,
-        instagram: data.response.instagram,
-        whats_app: data.response.whats_app,
-        name: data.response.name,
-        phone_number: data.response.phone_number,
+        id: result.data.id,
+        size: result.data.size,
+        email: result.data.email,
+        name: result.data.name,
       };
       console.log(company);
-      nextStep()
-      dispatch(saveCompany({company}))
+      nextStep();
+      dispatch(saveCompany({ company }));
     }
   };
   const AlreadyGotCompanyHandler = (response: CompanyState) => {
-      const company: CompanyState = {
-        category_id: response.category_id,
-        id: response.id,
-        country_id: response.country_id,
-        email: response.email,
-        facebook: response.facebook,
-        instagram: response.instagram,
-        whats_app: response.whats_app,
-        name: response.name,
-        phone_number: response.phone_number,
-      };
-      console.log(company);
-      console.log("already got")
-      nextStep();
-      dispatch(saveCompany({ company }));
+    const company: CompanyState = {
+      size: response.size,
+      name: response.name,
+      id: response.id,
+      email: response.email,
+    };
+    console.log(company);
+    console.log("already got");
+    nextStep();
+    dispatch(saveCompany({ company }));
   };
 
   const onSuccessSubmit = () => {
     nextStep();
-  }
+  };
 
   const goBackPrevStep = () => {
     prevStep();
-  }
+  };
 
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "100px" }}>
@@ -96,15 +79,16 @@ const OnboardingPage = () => {
           />
         </Step>
 
-        <Step label="Step 2" description="Add Store">
-          <MarketIntegration
+        <Step label="Step 2" description="Add Branch">
+          <Text>ADd branch form</Text>
+          {/* <MarketIntegration
             type="first"
             nextStep={onSuccessSubmit}
             prevStep={goBackPrevStep}
-          />
+          /> */}
         </Step>
         <Step label="Step 3" description="Select Package">
-          <Pricing nextStep={onSuccessSubmit} prevStep={goBackPrevStep} />
+          <Text>hahahah</Text>
         </Step>
 
         <Step label="Step 3" description="Payment Details">
@@ -115,7 +99,7 @@ const OnboardingPage = () => {
             borderColor="primary"
             color="primary"
             variant="outline"
-            onClick={()=>history.push('/')}
+            onClick={() => history.push("/")}
           >
             Get Started
           </Button>

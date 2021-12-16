@@ -10,10 +10,10 @@ export const CompanyApi = {
     return axios.get("api/v1/company/create");
   },
   postCreateCompany: async (payload: CreateCompanyType) => {
-    return axios.post("api/v1/company/store", payload);
+    return axios.post("company", payload);
   },
   getCompanyDetail: async () => {
-    return axios.get("api/v1/company/show");
+    return axios.get("company");
   },
   EditCompanyDetail: async (company_id: number, formData: CreateCompanyType) => {
     const payload = {

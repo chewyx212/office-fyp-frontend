@@ -51,41 +51,41 @@ const ProfilePage = () => {
   const dispatch = useAppDispatch();
 
   const OnSubmitCreateCompany = async (payload: CreateCompanyType) => {
-    const { data } = await CompanyApi.postCreateCompany(payload);
-    console.log(data);
-    if (data.status === 0) {
-      const company: CompanyState = {
-        category_id: data.response.category_id,
-        id: data.response.id,
-        country_id: data.response.country_id,
-        email: data.response.email,
-        facebook: data.response.facebook,
-        instagram: data.response.instagram,
-        whats_app: data.response.whats_app,
-        name: data.response.name,
-        phone_number: data.response.phone_number,
-      };
-      console.log(company);
-      // nextStep()
-      dispatch(saveCompany({company}))
-    }
+    // const { data } = await CompanyApi.postCreateCompany(payload);
+    // console.log(data);
+    // if (data.status === 0) {
+    //   const company: CompanyState = {
+    //     category_id: data.response.category_id,
+    //     id: data.response.id,
+    //     country_id: data.response.country_id,
+    //     email: data.response.email,
+    //     facebook: data.response.facebook,
+    //     instagram: data.response.instagram,
+    //     whats_app: data.response.whats_app,
+    //     name: data.response.name,
+    //     phone_number: data.response.phone_number,
+    //   };
+    //   console.log(company);
+    //   // nextStep()
+    //   dispatch(saveCompany({company}))
+    // }
   };
 
   const AlreadyGotCompanyHandler = (response: CompanyState) => {
-    const company: CompanyState = {
-      category_id: response.category_id,
-      id: response.id,
-      country_id: response.country_id,
-      email: response.email,
-      facebook: response.facebook,
-      instagram: response.instagram,
-      whats_app: response.whats_app,
-      name: response.name,
-      phone_number: response.phone_number,
-    };
-    console.log(company);
-    // nextStep();
-    dispatch(saveCompany({ company }));
+    // const company: CompanyState = {
+    //   category_id: response.category_id,
+    //   id: response.id,
+    //   country_id: response.country_id,
+    //   email: response.email,
+    //   facebook: response.facebook,
+    //   instagram: response.instagram,
+    //   whats_app: response.whats_app,
+    //   name: response.name,
+    //   phone_number: response.phone_number,
+    // };
+    // console.log(company);
+    // // nextStep();
+    // dispatch(saveCompany({ company }));
 };
 
   return (

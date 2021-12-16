@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CompanyState } from "types/CompanyType";
 
-
 interface SavePayloadAction {
   company: CompanyState;
 }
@@ -11,15 +10,10 @@ interface UpdatePayloadAction {
 }
 
 const initialState = {
-  category_id: "",
+  size: "",
   id: "",
-  country_id: "",
   email: "",
-  facebook: "",
-  instagram: "",
-  whats_app: "",
   name: "",
-  phone_number: "",
 } as CompanyState;
 
 const companySlice = createSlice({
@@ -35,15 +29,10 @@ const companySlice = createSlice({
     },
     clearCompany: (state) => {
       state = {
-        category_id: "",
         id: "",
-        country_id: "",
+        size: "",
         email: "",
-        facebook: "",
-        whats_app: "",
-        instagram: "",
         name: "",
-        phone_number: "",
       };
 
       localStorage.removeItem("company_info");
