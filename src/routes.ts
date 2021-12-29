@@ -19,6 +19,8 @@ import AddCustomerPage from "pages/customer/AddCustomerPage";
 import InventoryPage from "pages/inventory/InventoryPage";
 import CustomerGroupPage from "pages/customer/CustomerGroupPage";
 import SalesReportPage from "pages/sales-report/SalesReportPage";
+import DeskPage from "pages/desk/DeskPage";
+import AddDeskPage from "pages/desk/AddDeskPage";
 export interface routeType {
   path: string;
   name: string;
@@ -61,6 +63,23 @@ const routes: routeType[] = [
     showNav: true,
     showSide: true,
     layout: "",
+  },
+
+  {
+    path: "/desk",
+    name: "Desk",
+    component: DeskPage,
+    showNav: true,
+    showSide: true,
+    layout: "",
+  },
+  {
+    path: "/add-desk",
+    name: "Add Desk",
+    component: AddDeskPage,
+    showNav: true,
+    showSide: true,
+    layout: "/desk",
   },
 
   // ADD STORE
@@ -179,8 +198,8 @@ const routes: routeType[] = [
 
   // Sales Report
   {
-    path: "/sales-report",
-    name: "Sales Report",
+    path: "/report",
+    name: "Report",
     component: SalesReportPage,
     showNav: true,
     showSide: true,

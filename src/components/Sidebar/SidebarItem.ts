@@ -1,7 +1,7 @@
 
 import { FiHome, FiShoppingCart, FiPackage, FiUsers, FiBarChart2 } from "react-icons/fi";
 import { IconType } from "react-icons";
-import { BiSync } from "react-icons/bi";
+import { GiTable } from "react-icons/gi";
 
 export interface SidebarType {
   name: string;
@@ -17,9 +17,9 @@ export interface SubNavType {
 const routes: SidebarType[] = [
   { name: "Dashboard", icon: FiHome, link: "/", subNav: [] },
   {
-    name: "Integration",
-    icon: BiSync,
-    link: "/integration",
+    name: "Desk",
+    icon: GiTable,
+    link: "/desk",
     subNav: [],
   },
   {
@@ -68,15 +68,15 @@ const routes: SidebarType[] = [
   //   ],
   // },
   {
-    name: "Customer",
+    name: "Employee",
     icon: FiUsers,
     link: "/customer",
     subNav: [],
   },
   {
-    name: "Sales Report",
+    name: "Report",
     icon: FiBarChart2,
-    link: "/sales-report",
+    link: "/report",
     subNav: [],
   },
 ];

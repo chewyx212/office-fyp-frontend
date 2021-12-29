@@ -34,7 +34,7 @@ import { FiUser, FiDollarSign, FiUsers, FiShoppingCart } from "react-icons/fi";
 import { useHistory } from "react-router-dom";
 import { CompanyState } from "types/CompanyType";
 
-const DashboardPage = () => {
+const AddDeskPage = () => {
   let cardColor = useColorModeValue("white", "gray.700");
   let borderColor = useColorModeValue("transparent", "gray.600");
   const history = useHistory();
@@ -444,4 +444,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default AddDeskPage;

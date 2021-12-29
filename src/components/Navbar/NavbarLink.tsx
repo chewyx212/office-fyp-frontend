@@ -42,7 +42,7 @@ const NavbarLink = () => {
       justifyContent="center"
       flexDirection="row"
     >
-      <Button
+      {/* <Button
         display={{ base: "none", md: "block" }}
         variant="outline"
         borderColor="primary"
@@ -62,7 +62,7 @@ const NavbarLink = () => {
         ms={{ base: "12px", xl: "0px" }}
         me="12px"
         onClick={() => history.push("/integration")}
-      />
+      /> */}
       <Icon
         as={FiUser}
         cursor="pointer"
