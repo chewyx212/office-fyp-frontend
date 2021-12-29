@@ -9,6 +9,7 @@ import {
   HStack,
   Spacer,
   Progress,
+  Img,
   Table,
   Tbody,
   Td,
@@ -23,6 +24,7 @@ import {
   StatNumber,
   Icon,
   useColorModeValue,
+  Image,
 } from "@chakra-ui/react";
 import { AreaApi } from "api/AreaApi";
 import { CompanyApi } from "api/CompanyApi";
@@ -233,7 +235,11 @@ const DeskPage = () => {
               </Flex>
             </Stat>
             <Box borderRadius="15px" h={"45px"} w={"45px"} bg="primary">
-              <Flex justifyContent="center" alignItems="center">
+              <Flex
+                justifyContent="center"
+                alignItems="center"
+                onClick={() => history.push("/desk/add-desk")}
+              >
                 <Icon as={FiUser} color="white" h="24px" w="24px" mt="10px" />
               </Flex>
             </Box>
