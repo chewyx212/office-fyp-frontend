@@ -10,6 +10,7 @@ import { useAppDispatch } from "app/hooks";
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import L, { LatLngBoundsLiteral } from "leaflet";
+import { MapContainer } from "react-leaflet";
 
 const AddDeskPage = () => {
   let cardColor = useColorModeValue("white", "gray.700");
@@ -39,6 +40,7 @@ const AddDeskPage = () => {
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "100px" }}>
       <Box id="map" h="100vh"></Box>
+      <MapContainer></MapContainer>
     </Flex>
   );
 };
