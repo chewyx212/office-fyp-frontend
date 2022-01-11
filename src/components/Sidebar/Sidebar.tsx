@@ -64,7 +64,7 @@ const Sidebar: React.FC = () => {
       m={"16px 0px 16px 16px"}
     >
       <Box my="16px" textAlign="center" fontSize="20px">
-        CRM System
+        SpaceB
       </Box>
       <Stack direction="column" mb="40px">
         <Box>

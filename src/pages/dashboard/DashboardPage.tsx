@@ -24,14 +24,16 @@ import {
   Icon,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { BranchApi } from "api/BranchApi";
 import { CompanyApi } from "api/CompanyApi";
 import { StoreApi } from "api/StoreApi";
 import { logout } from "app/auth/authSlice";
-import { saveCompany } from "app/company/companySlice";
+import { saveCompany, saveCompanyBranch } from "app/company/companySlice";
 import { useAppDispatch } from "app/hooks";
 import { useEffect } from "react";
 import { FiUser, FiDollarSign, FiUsers, FiShoppingCart } from "react-icons/fi";
 import { useHistory } from "react-router-dom";
+import { BranchState } from "types/BranchType";
 import { CompanyState } from "types/CompanyType";
 
 const DashboardPage = () => {
@@ -41,6 +43,7 @@ const DashboardPage = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     getCompanyDetail();
+    getBranch();
   }, []);
 
   const getCompanyDetail = async () => {
@@ -58,6 +61,17 @@ const DashboardPage = () => {
       dispatch(saveCompany({ company }));
     } else if (result.status === 200) {
       history.push("/onboarding");
+    } else if (result.status === 401) {
+      dispatch(logout());
+    }
+  };
+  const getBranch = async () => {
+    const result = await BranchApi.getAllBranch();
+    if (result.status === 200 && result.data && result.data.length > 0) {
+      const branchs: BranchState[] = result.data;
+      console.log(branchs);
+      console.log("already got");
+      dispatch(saveCompanyBranch({ branchs }));
     } else if (result.status === 401) {
       dispatch(logout());
     }

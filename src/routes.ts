@@ -7,12 +7,6 @@ import { IconType } from "react-icons";
 import ProfilePage from "pages/profile/ProfilePage";
 import IntegrationPage from "pages/integration/IntegrationPage";
 import AddStorePage from "pages/integration/AddStorePage";
-import OrdersPage from "pages/order/OrdersPage";
-import PendingOrderPage from "pages/order/PendingOrderPage";
-import AbnormalOrderPage from "pages/order/AbnormalOrderPage";
-import ItemPage from "pages/items/ItemPage";
-import AddItemPage from "pages/items/AddItemPage";
-import PriceMangementPage from "pages/items/PriceMangementPage";
 import OrderSettingPage from "pages/settings/orderSetting/OrderSettingPage";
 import CustomerPage from "pages/customer/CustomerPage";
 import AddCustomerPage from "pages/customer/AddCustomerPage";
@@ -21,6 +15,7 @@ import CustomerGroupPage from "pages/customer/CustomerGroupPage";
 import SalesReportPage from "pages/sales-report/SalesReportPage";
 import DeskPage from "pages/desk/DeskPage";
 import AddDeskPage from "pages/desk/AddDeskPage";
+import RoomPage from "pages/room/RoomPage";
 export interface routeType {
   path: string;
   name: string;
@@ -81,6 +76,14 @@ const routes: routeType[] = [
     showSide: true,
     layout: "/desk",
   },
+  {
+    path: "/room",
+    name: "Room",
+    component: RoomPage,
+    showNav: true,
+    showSide: true,
+    layout: "",
+  },
 
   // ADD STORE
   {
@@ -95,63 +98,6 @@ const routes: routeType[] = [
     path: "/add-store",
     name: "Add Store",
     component: AddStorePage,
-    showNav: true,
-    showSide: true,
-    layout: "",
-  },
-
-  // ORDER
-  {
-    path: "/orders",
-    name: "Orders",
-    icon: FiShoppingCart,
-    component: OrdersPage,
-    showNav: true,
-    showSide: true,
-    layout: "",
-  },
-  {
-    path: "/pending-order",
-    name: "Pending Order",
-    icon: FiShoppingCart,
-    component: PendingOrderPage,
-    showNav: true,
-    showSide: true,
-    layout: "",
-  },
-  {
-    path: "/abnormal-order",
-    name: "Abnormal Order",
-    icon: FiShoppingCart,
-    component: AbnormalOrderPage,
-    showNav: true,
-    showSide: true,
-    layout: "",
-  },
-
-  // ITEM
-  {
-    path: "/item",
-    name: "Item",
-    icon: FiPackage,
-    component: ItemPage,
-    showNav: true,
-    showSide: true,
-    layout: "",
-  },
-  {
-    path: "/add-item",
-    name: "Add Item",
-    component: AddItemPage,
-    showNav: true,
-    showSide: true,
-    layout: "",
-  },
-  {
-    path: "/price-management",
-    name: "Price Management",
-    icon: FiDollarSign,
-    component: PriceMangementPage,
     showNav: true,
     showSide: true,
     layout: "",

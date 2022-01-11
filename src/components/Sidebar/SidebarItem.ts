@@ -23,39 +23,30 @@ const routes: SidebarType[] = [
     subNav: [],
   },
   {
-    name: "Order",
-    icon: FiShoppingCart,
-    link: "/order",
-    subNav: [
-      {
-        name: "All Orders",
-        link: "/orders",
-      },
-      {
-        name: "Pending Order",
-        link: "/pending-order",
-      },
-      {
-        name: "Abnormal Order",
-        link: "/abnormal-order",
-      },
-    ],
+    name: "Room",
+    icon: GiTable,
+    link: "/room",
+    subNav: [],
   },
-  {
-    name: "Item",
-    icon: FiPackage,
-    link: "/item",
-    subNav: [
-      {
-        name: "All Items",
-        link: "/item",
-      },
-      {
-        name: "Price Management",
-        link: "/price-management",
-      },
-    ],
-  },
+  // {
+  //   name: "Room",
+  //   icon: FiShoppingCart,
+  //   link: "/order",
+  //   subNav: [
+  //     {
+  //       name: "Room",
+  //       link: "/room",
+  //     },
+  //     {
+  //       name: "Pending Order",
+  //       link: "/",
+  //     },
+  //     {
+  //       name: "Abnormal Order",
+  //       link: "/abnormal-order",
+  //     },
+  //   ],
+  // },
   // {
   //   name: "Inventory",
   //   icon: FiPackage,

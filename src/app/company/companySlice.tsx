@@ -30,7 +30,11 @@ const companySlice = createSlice({
   initialState,
   reducers: {
     saveCompany: (state, action: PayloadAction<SavePayloadAction>) => {
-      state = { ...state, ...action.payload.company };
+      state.size = action.payload.company.size;
+      state.id = action.payload.company.id;
+      state.email = action.payload.company.email;
+      state.name = action.payload.company.name;
+
       localStorage.setItem("company_info", JSON.stringify(state));
     },
     clearCompany: (state) => {
@@ -41,15 +45,13 @@ const companySlice = createSlice({
       state,
       action: PayloadAction<SaveBranchPayloadAction>
     ) => {
-      state = { ...state, branchs: action.payload.branchs };
+      state.branchs = action.payload.branchs;
+      state.selectedBranch = action.payload.branchs[0].id;
       localStorage.setItem("company_info", JSON.stringify(state));
     },
     selectBranch: (state, action: PayloadAction<SelectBranchPayloadAction>) => {
-      state = { ...state, selectedBranch: action.payload.branchId };
-      localStorage.setItem(
-        "company_info",
-        JSON.stringify(state)
-      );
+      state.selectedBranch=action.payload.branchId
+      localStorage.setItem("company_info", JSON.stringify(state));
     },
 
     updateInfo: (state, action: PayloadAction<UpdatePayloadAction>) => {

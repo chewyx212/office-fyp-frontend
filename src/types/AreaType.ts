@@ -1,6 +1,6 @@
 export interface CreateAreaType {
-  name: string;
-  address: string;
+  data: { name: string };
+  floorplan: File;
 }
 
 export interface AreaState {
