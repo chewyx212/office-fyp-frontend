@@ -24,9 +24,18 @@ const routes: SidebarType[] = [
   },
   {
     name: "Room",
-    icon: GiTable,
+    icon: FiShoppingCart,
     link: "/room",
-    subNav: [],
+    subNav: [
+      {
+        name: "Room",
+        link: "/room",
+      },
+      {
+        name: "Room Schedule",
+        link: "/room/room-schedule",
+      },
+    ],
   },
   // {
   //   name: "Room",

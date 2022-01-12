@@ -16,6 +16,7 @@ import SalesReportPage from "pages/sales-report/SalesReportPage";
 import DeskPage from "pages/desk/DeskPage";
 import AddDeskPage from "pages/desk/AddDeskPage";
 import RoomPage from "pages/room/RoomPage";
+import RoomSchedulePage from "pages/room/RoomSchedulePage";
 export interface routeType {
   path: string;
   name: string;
@@ -83,6 +84,14 @@ const routes: routeType[] = [
     showNav: true,
     showSide: true,
     layout: "",
+  },
+  {
+    path: "/room-schedule",
+    name: "Room Schedule",
+    component: RoomSchedulePage,
+    showNav: true,
+    showSide: true,
+    layout: "/room",
   },
 
   // ADD STORE

@@ -13,4 +13,30 @@ export const RoomApi = {
   getAllRoom: async (branchId: string) => {
     return axios.get(`room?branchId=${branchId}`);
   },
+  editRoom: async (
+    branchId: string,
+    payload: {
+      name: string;
+      detail: string;
+      status: boolean;
+    }
+  ) => {
+    return axios.patch(`room/${branchId}`, payload);
+  },
+
+  scheduleRoom: async (payload: {
+    roomId: string;
+    branchId: string;
+    datetime: string;
+    duration: number;
+  }) => {
+    return axios.post("room-schedule", payload);
+  },
+  getAllRoomSchedule: async (branchId: string) => {
+    return axios.get(`room-schedule?branchId=${branchId}`);
+  },
+
+  getOneRoomSchedule: async (roomId: string) => {
+    return axios.get(`room-schedule/${roomId}`);
+  },
 };

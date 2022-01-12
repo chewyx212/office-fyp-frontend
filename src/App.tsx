@@ -3,7 +3,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { login, logout } from "app/auth/authSlice";
 import PublicRoute from "./routes/PublicRoute";
 import PrivateRoute from "./routes/PrivateRoute";
-import { Route, Switch, Redirect } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import theme from "theme/theme";
 
