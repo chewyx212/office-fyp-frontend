@@ -1,98 +1,253 @@
-import { Flex, Stack, Img, Box, useColorModeValue } from "@chakra-ui/react";
+import {
+  Flex,
+  Stack,
+  Img,
+  Box,
+  useColorModeValue,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Switch,
+  FormHelperText,
+} from "@chakra-ui/react";
 import { useAppDispatch } from "app/hooks";
-import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import L, { LatLngBoundsLiteral } from "leaflet";
-import { MapContainer, ImageOverlay, useMapEvents, useMap } from "react-leaflet";
+import { DeskApi } from "api/DeskApi";
+import { useEffect, useState, useRef } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import L, { LatLng, LatLngBoundsLiteral } from "leaflet";
+import {
+  MapContainer,
+  ImageOverlay,
+  PopupProps,
+  Marker,
+  Popup,
+  Circle,
+} from "react-leaflet";
+import { AreaApi } from "api/AreaApi";
+import { AreaType } from "types/AreaType";
 
+interface DeskType {
+  name: string;
+  detail: string;
+  status: boolean;
+  latlng: LatLng;
+}
+interface DeskFormType {
+  name: string;
+  detail: string;
+  status: boolean;
+}
+const initialDeskForm = {
+  name: "",
+  detail: "",
+  status: false,
+};
 const AddDeskPage = () => {
+  const [area, setArea] = useState<AreaType>();
+  const [requiredName, setRequiredName] = useState<boolean>(false);
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [bounds, setBounds] = useState<LatLngBoundsLiteral>([
     [0, 0],
     [1000, 1000],
   ]);
+  const [markers, setMarkers] = useState<DeskType[]>([]);
+  const [tempMarker, setTempMarker] = useState<DeskType>();
+  const [value, setValue] = useState<DeskFormType>(initialDeskForm);
 
-  // useEffect(() => {
-  //   getCompanyDetail();
-  //   var map = L.map("map", {
-  //     crs: L.CRS.Simple,
-  //   });
-  //   L.imageOverlay(
-  //     "https://www.roomsketcher.com/wp-content/uploads/2017/11/RoomSketcher-Office-Floor-Plan-PID3529710-2D-bw-with-Labels.jpg",
-  //     bounds
-  //   ).addTo(map);
-  //   map.fitBounds(bounds);
-  // }, []);
+  const { areaId } = location.state as {
+    areaId: string;
+  };
+
+  const popupRef = useRef<any>(null);
+
   useEffect(() => {
-    console.log(bounds);
-    console.log(isLoading);
-    setIsLoading(true);
-    const { width, height } = getMeta(
-      "https://www.roomsketcher.com/wp-content/uploads/2017/11/RoomSketcher-Office-Floor-Plan-PID3529710-2D-bw-with-Labels.jpg"
-    );
-    setBounds([
-      [0, 0],
-      [width, height],
-    ]);
-    setIsLoading(false);
+    getArea();
   }, []);
+
+  const getArea = async () => {
+    if (areaId) {
+      const result = await AreaApi.getOneArea(areaId);
+      if (result.status === 200 && result.data) {
+        setArea(result.data);
+
+        setIsLoading(true);
+        const { width, height } = getMeta(result.data.imagePath);
+        setBounds([
+          [0, 0],
+          [width, height],
+        ]);
+        setIsLoading(false);
+      }
+    } else {
+      history.push("/area");
+    }
+  };
 
   const getMeta = (url: string) => {
     let img = new Image();
     img.src = url;
-    console.log(img.height);
-    console.log({
-      width: img.width,
-      height: img.height,
-    });
     return {
       width: img.width,
       height: img.height,
     };
   };
-
-  const MapEvents = () => {
-    useMapEvents({
-      click(e) {
-        // setState your coords here
-        // coords exist in "e.latlng.lat" and "e.latlng.lng"
-        console.log(e.latlng.lat);
-        console.log(e.latlng.lng);
-      },
-    });
-    return null;
+  const handleChange = (input: any, key: string) => {
+    setValue((prevState) => ({ ...prevState, [key]: input }));
   };
 
+  const onSaveDesk = async (newDesk: DeskType) => {
+    if (value.name) {
+      const payload = {
+        name: value.name,
+        detail: value.detail,
+        status: value.status,
+        lat: newDesk.latlng.lat,
+        lng: newDesk.latlng.lng,
+        areaId,
+      };
+      const newMark = {
+        ...newDesk,
+        name: value.name,
+        detail: value.detail,
+        status: value.status,
+      };
+      const result = await DeskApi.createDesk(payload);
+      if (result.status === 201 && result.data) {
+        markers.push(newMark);
+        setMarkers((prevValue) => [...prevValue, newMark]);
+        setRequiredName(false);
+        setValue(initialDeskForm);
+        console.log(popupRef.current._closeButton.click());
+      }
+    } else {
+      setRequiredName(true);
+    }
+  };
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "100px" }}>
-      {!isLoading && (
-        <Flex w="100%" h="100%">
+      <Flex w="100%" h="100%">
+        {area && (
           <MapContainer
             zoom={0}
-            center={[250, 250]}
+            center={[500, 500]}
             scrollWheelZoom={true}
-            fitBounds={[
-              [0, 0],
-              [100, 100],
-            ]}
-            style={{ width: "100vw", height: "40vw" }}
+            style={{ width: "100vw", height: "700px" }}
             crs={L.CRS.Simple}
+            doubleClickZoom={false}
           >
             <ImageOverlay
-              url={
-                "https://www.roomsketcher.com/wp-content/uploads/2017/11/RoomSketcher-Office-Floor-Plan-PID3529710-2D-bw-with-Labels.jpg"
-              }
+              url={area.imagePath}
               bounds={bounds}
+              interactive={true}
+              eventHandlers={{
+                click: (e) => {
+                  const newDesk: DeskType = {
+                    name: "",
+                    detail: "",
+                    status: false,
+                    latlng: e.latlng,
+                  };
+                  setTempMarker(newDesk);
+                },
+              }}
             />
-            <MapEvents />
+            {markers.map((marker, index) => (
+              <Circle center={marker.latlng} key={index}>
+                <Popup ref={popupRef}>
+                  <Flex direction="column" w="300px" h="280px" bg="white">
+                    <FormControl>
+                      <FormLabel>Desk name</FormLabel>
+                      <Input
+                        isReadOnly
+                        placeholder="Desk name"
+                        value={marker.name}
+                      />
+                    </FormControl>
+
+                    <FormControl mt={4}>
+                      <FormLabel>Desk Detail</FormLabel>
+                      <Input
+                        isReadOnly
+                        placeholder="Desk Detail"
+                        value={marker.detail}
+                      />
+                    </FormControl>
+                    <FormControl
+                      mt={5}
+                      display="flex"
+                      w="100%"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <FormLabel>Active?</FormLabel>
+                      <Switch isReadOnly size="md" checked={marker.status} />
+                    </FormControl>
+                  </Flex>
+                </Popup>
+              </Circle>
+            ))}
+            {tempMarker && (
+              <Circle center={tempMarker.latlng}>
+                <Popup ref={popupRef}>
+                  <Flex direction="column" w="300px" h="280px" bg="white">
+                    <FormControl>
+                      <FormLabel>Desk name</FormLabel>
+                      <Input
+                        placeholder="Desk name"
+                        value={value.name}
+                        onChange={(e) => handleChange(e.target.value, "name")}
+                      />
+                      {requiredName && (
+                        <FormHelperText mt="0" color="red.500">
+                          This field is required
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+
+                    <FormControl mt={4}>
+                      <FormLabel>Desk Detail</FormLabel>
+                      <Input
+                        placeholder="Desk Detail"
+                        value={value.detail}
+                        onChange={(e) => handleChange(e.target.value, "detail")}
+                      />
+                    </FormControl>
+                    <FormControl
+                      mt={5}
+                      display="flex"
+                      w="100%"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <FormLabel>Active?</FormLabel>
+                      <Switch
+                        size="md"
+                        checked={value.status}
+                        onChange={(e) =>
+                          handleChange(e.target.checked, "status")
+                        }
+                      />
+                    </FormControl>
+                    <Button
+                      mt={5}
+                      colorScheme="blue"
+                      onClick={() => onSaveDesk(tempMarker)}
+                    >
+                      Save
+                    </Button>
+                  </Flex>
+                </Popup>
+              </Circle>
+            )}
           </MapContainer>
-        </Flex>
-      )}
+        )}
+      </Flex>
     </Flex>
   );
 };
-
 
 export default AddDeskPage;

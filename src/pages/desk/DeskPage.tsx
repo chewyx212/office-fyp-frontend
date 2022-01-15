@@ -30,48 +30,58 @@ import {
   FormLabel,
   Input,
   FormControl,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  Switch,
 } from "@chakra-ui/react";
-import { AreaApi } from "api/AreaApi";
-import { CompanyApi } from "api/CompanyApi";
-import { StoreApi } from "api/StoreApi";
+import { DeskApi } from "api/DeskApi";
 import { logout } from "app/auth/authSlice";
-import { saveCompany } from "app/company/companySlice";
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { FiUser, FiDollarSign, FiUsers, FiShoppingCart } from "react-icons/fi";
 import { useHistory } from "react-router-dom";
-import { CompanyState } from "types/CompanyType";
+import { FiEdit2 } from "react-icons/fi";
+import { DeskType } from "types/DeskType";
+import { AreaApi } from "api/AreaApi";
+import { AreaType } from "types/AreaType";
 
 const DeskPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    reset,
     formState: { errors },
   } = useForm();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [gettingStart, setGettingStart] = useState<boolean>(false);
-  const [areaList, setAreaList] = useState<any[]>([]);
+  const [openPreviewImage, setOpenPreviewImage] = useState<boolean>(false);
+  const [deskList, setDeskList] = useState<any[]>([]);
+  const [area, setArea] = useState<AreaType>();
+
   let cardColor = useColorModeValue("white", "gray.700");
   let borderColor = useColorModeValue("transparent", "gray.600");
+  const initialRef = useRef(null);
+  const finalRef = useRef(null);
   const history = useHistory();
   const dispatch = useAppDispatch();
-
-  const savedBranchs = useAppSelector((state) => state.company.selectedBranch);
+  const areaId = new URLSearchParams(history.location.search).get("areaId");
   useEffect(() => {
-    getAllArea();
+    getArea();
+    getAllDesk();
   }, []);
 
-  const getAllArea = async () => {
+  const getAllDesk = async () => {
     setIsLoading(true);
-    console.log(savedBranchs);
-    if (savedBranchs) {
-      const result = await AreaApi.getAllArea(savedBranchs);
+    if (areaId) {
+      const result = await DeskApi.getAllDesk(areaId);
       console.log(result);
       if (result.status === 200 && result.data) {
         if (result.data.length > 0) {
-          setAreaList(result.data);
+          setDeskList(result.data);
         }
       } else if (result.status === 200) {
         history.push("/onboarding");
@@ -80,19 +90,38 @@ const DeskPage = () => {
       } else if (result.status === 404) {
         console.log(result.data.message);
       }
+    } else {
+      history.push("/area");
+    }
+
+    setIsLoading(false);
+  };
+  const getArea = async () => {
+    setIsLoading(true);
+    if (areaId) {
+      const result = await AreaApi.getOneArea(areaId);
+      console.log(result);
+      if (result.status === 200 && result.data) {
+        setArea(result.data);
+      } else if (result.status === 200) {
+        history.push("/onboarding");
+      } else if (result.status === 401) {
+        dispatch(logout());
+      } else if (result.status === 404) {
+        console.log(result.data.message);
+      }
+    } else {
+      history.push("/area");
     }
 
     setIsLoading(false);
   };
 
-  const onSubmit = async (field: any) => {
-    const payload = {
-      name: field.name,
-      image: field.floorplan[0],
-    };
-    console.log(payload)
-    const result = await AreaApi.createArea(payload);
-    console.log(result);
+  const showImagePreview = async () => {
+    setOpenPreviewImage(true);
+  };
+  const closeImagePreview = async () => {
+    setOpenPreviewImage(false);
   };
 
   return (
@@ -106,68 +135,44 @@ const DeskPage = () => {
         >
           <Spinner size="xl" />
         </Flex>
-      ) : areaList.length > 0 ? (
+      ) : (
         <Flex flexDirection="column" pt={{ base: "120px", md: "100px" }}>
-          <SimpleGrid mb="10" columns={{ sm: 1, md: 2, xl: 4 }} spacing="24px">
-            <Box
-              border="1px"
-              borderColor={borderColor}
-              bg={cardColor}
-              minH="83px"
-              borderRadius="20px"
-              p="1.5rem"
-              boxShadow="0px 3.5px 5.5px rgba(0, 0, 0, 0.02)"
+          {area && (
+            <Flex
+              flexDirection="row"
+              justify="space-between"
+              align="center"
+              bg="white"
+              borderRadius="xl"
+              py={10}
+              px={5}
+              my={5}
             >
-              <Flex
-                flexDirection="row"
-                align="center"
-                justify="center"
-                w="100%"
-              >
-                <Stat me="auto">
-                  <StatLabel
-                    fontSize="sm"
-                    color="gray.400"
-                    fontWeight="bold"
-                    pb=".1rem"
-                  >
-                    Today's Occupancy
-                  </StatLabel>
-                  <Flex>
-                    <StatNumber fontSize="lg" color="blue-300" pr={2}>
-                      20/71
-                    </StatNumber>
-                    <StatHelpText
-                      alignSelf="flex-end"
-                      justifySelf="flex-end"
-                      m="0px"
-                      color="green.400"
-                      fontWeight="bold"
-                      ps="3px"
-                      fontSize="md"
-                    >
-                      55%
-                    </StatHelpText>
-                  </Flex>
-                </Stat>
-                <Box borderRadius="15px" h={"45px"} w={"45px"} bg="primary">
-                  <Flex justifyContent="center" alignItems="center">
-                    <Icon
-                      as={FiUser}
-                      color="white"
-                      h="24px"
-                      w="24px"
-                      mt="10px"
-                    />
-                  </Flex>
-                </Box>
-              </Flex>
-            </Box>
-          </SimpleGrid>
+              <Heading size="md">Area Name: {area.name}</Heading>
+              <Button onClick={showImagePreview}>View Floor Plan</Button>
+            </Flex>
+          )}
 
-          <Heading as="h4" size="md" mt="10">
-            Recent Scheduled Desk
-          </Heading>
+          <Flex direction="row" justify="space-between" align="center">
+            <Heading as="h4" size="md">
+              All Desk
+            </Heading>
+            <Button
+              colorScheme="blue"
+              size="md"
+              w="200px"
+              onClick={() =>
+                history.push({
+                  pathname: "/area/add-desk",
+                  state: {
+                    areaId,
+                  },
+                })
+              }
+            >
+              New Desk
+            </Button>
+          </Flex>
           <Box
             overflow="auto"
             border="1px"
@@ -178,203 +183,82 @@ const DeskPage = () => {
             bg={cardColor}
             boxShadow="0px 3.5px 5.5px rgba(0, 0, 0, 0.02)"
           >
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>User</Th>
-                  <Th>Date</Th>
-                  <Th isNumeric>Desk ID</Th>
-                  <Th>Status</Th>
-                  <Th>Action</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td>Jessica</Td>
-                  <Td>5 Oct 2021</Td>
-                  <Td isNumeric>A15</Td>
-                  <Td>
-                    <Badge
-                      borderRadius="50px"
-                      px="3"
-                      py="1"
-                      colorScheme="green"
-                    >
-                      Checked In
-                    </Badge>
-                  </Td>
-                  <Td>
-                    <Button
-                      fontSize="16px"
-                      type="submit"
-                      bg="primary"
-                      h="45"
-                      color="white"
-                      _hover={{
-                        bg: "blue.200",
-                      }}
-                      _active={{
-                        bg: "blue.400",
-                      }}
-                    >
-                      View
-                    </Button>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td>Tifanny</Td>
-                  <Td>Oct 5, 2021</Td>
-                  <Td isNumeric>A14</Td>
-                  <Td>
-                    <Badge
-                      borderRadius="50px"
-                      px="3"
-                      py="1"
-                      colorScheme="green"
-                    >
-                      Checked In
-                    </Badge>
-                  </Td>
-                  <Td>
-                    <Button
-                      fontSize="16px"
-                      type="submit"
-                      bg="primary"
-                      h="45"
-                      color="white"
-                      _hover={{
-                        bg: "blue.200",
-                      }}
-                      _active={{
-                        bg: "blue.400",
-                      }}
-                    >
-                      View
-                    </Button>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td>Alex</Td>
-                  <Td>Oct 5, 2021</Td>
-                  <Td isNumeric>A13</Td>
-                  <Td>
-                    <Badge
-                      borderRadius="50px"
-                      px="3"
-                      py="1"
-                      colorScheme="green"
-                    >
-                      Checked In
-                    </Badge>
-                  </Td>
-                  <Td>
-                    <Button
-                      fontSize="16px"
-                      type="submit"
-                      bg="primary"
-                      h="45"
-                      color="white"
-                      _hover={{
-                        bg: "blue.200",
-                      }}
-                      _active={{
-                        bg: "blue.400",
-                      }}
-                    >
-                      View
-                    </Button>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
+            {deskList.length <= 0 && (
+              <Flex align="center" justify="center" w="100%">
+                <Text>No Desk Found.</Text>
+              </Flex>
+            )}
+            {deskList.length > 0 && (
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th>No</Th>
+                    <Th>Name</Th>
+                    <Th>Status</Th>
+                    <Th>Action</Th>
+                  </Tr>
+                </Thead>
+
+                <Tbody>
+                  {deskList.map((desk: DeskType, index: number) => {
+                    return (
+                      <Tr key={desk.id}>
+                        <Td>{index + 1}</Td>
+                        <Td>{desk.name}</Td>
+                        <Td>
+                          {desk.status ? (
+                            <Badge
+                              borderRadius="50px"
+                              px="3"
+                              py="1"
+                              colorScheme="green"
+                            >
+                              Active
+                            </Badge>
+                          ) : (
+                            <Badge
+                              borderRadius="50px"
+                              px="3"
+                              py="1"
+                              colorScheme="red"
+                            >
+                              Inactive
+                            </Badge>
+                          )}
+                        </Td>
+                        <Td>
+                          <Button
+                            fontSize="16px"
+                            type="submit"
+                            bg="primary"
+                            h="45"
+                            color="white"
+                            _hover={{
+                              bg: "blue.200",
+                            }}
+                            _active={{
+                              bg: "blue.400",
+                            }}
+                          >
+                            <Icon as={FiEdit2} color="white" fontSize="20px" />
+                          </Button>
+                        </Td>
+                      </Tr>
+                    );
+                  })}
+                </Tbody>
+              </Table>
+            )}
           </Box>
         </Flex>
-      ) : !gettingStart ? (
-        <Flex
-          pt={{ base: "120px", md: "100px" }}
-          h="70vh"
-          flexDirection="column"
-          justify="center"
-          alignItems="center"
-        >
-          <Flex width="300px" flexDirection="column" s>
-            <Heading>Arrange your desk with ease!</Heading>
-            <Button
-              onClick={() => setGettingStart(true)}
-              mt={3}
-              bg="blue.400"
-              color="white"
-              _hover={{ bg: "blue.500" }}
-              variant="solid"
-            >
-              Getting Start
-            </Button>
-          </Flex>
-        </Flex>
-      ) : (
-        <Flex pt={{ base: "120px", md: "100px" }} flexDirection="column">
-          <Text fontSize={22} fontWeight="bold">
-            Create your first Area.
-          </Text>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl>
-              <SimpleGrid mt="10" columns={{ base: 1 }} spacing={10}>
-                <Box>
-                  <FormLabel>Area Name</FormLabel>
-                  <Input
-                    borderRadius="15px"
-                    fontSize="sm"
-                    mb="5px"
-                    type="text"
-                    placeholder="Area Name"
-                    size="lg"
-                    {...register("name", { required: true })}
-                  />
-                  {errors.name && (
-                    <FormHelperText mt="0" color="red.500">
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </Box>
-
-                <Box>
-                  <FormLabel>Floor Plan</FormLabel>
-                  <Input
-                    fontSize="sm"
-                    mb="5px"
-                    type="file"
-                    placeholder="Area Floor Plan"
-                    size="lg"
-                    {...register("floorplan", { required: true })}
-                  />
-                  {errors.floorplan && (
-                    <FormHelperText mt="0" color="red.500">
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </Box>
-              </SimpleGrid>
-            </FormControl>
-            <Button
-              fontSize="16px"
-              type="submit"
-              bg="primary"
-              w="100%"
-              h="45"
-              mt="40px"
-              color="white"
-              _hover={{
-                bg: "blue.200",
-              }}
-              _active={{
-                bg: "blue.400",
-              }}
-            >
-              Submit
-            </Button>
-          </form>
-        </Flex>
       )}
+
+      <Modal isOpen={openPreviewImage} onClose={closeImagePreview} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <Img src={area?.imagePath} alt="Area Image" />
+        </ModalContent>
+      </Modal>
     </>
   );
 };

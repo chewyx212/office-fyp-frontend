@@ -8,3 +8,9 @@ export interface DeskState {
   name: string;
   address: string;
 }
+
+export interface DeskType {
+  id: string;
+  name: string;
+  status: boolean;
+}

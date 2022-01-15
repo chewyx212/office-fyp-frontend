@@ -2,7 +2,7 @@
 import DashboardPage from "pages/dashboard/DashboardPage";
 
 import OnboardingPage from "pages/onboarding/OnboardingPage";
-import { FiHome, FiShoppingCart, FiPackage, FiDollarSign, FiUsers } from "react-icons/fi";
+import { FiHome, FiPackage, FiUsers } from "react-icons/fi";
 import { IconType } from "react-icons";
 import ProfilePage from "pages/profile/ProfilePage";
 import IntegrationPage from "pages/integration/IntegrationPage";
@@ -13,8 +13,9 @@ import AddCustomerPage from "pages/customer/AddCustomerPage";
 import InventoryPage from "pages/inventory/InventoryPage";
 import CustomerGroupPage from "pages/customer/CustomerGroupPage";
 import SalesReportPage from "pages/sales-report/SalesReportPage";
-import DeskPage from "pages/desk/DeskPage";
+import AreaPage from "pages/desk/AreaPage";
 import AddDeskPage from "pages/desk/AddDeskPage";
+import DeskPage from "pages/desk/DeskPage";
 import RoomPage from "pages/room/RoomPage";
 import RoomSchedulePage from "pages/room/RoomSchedulePage";
 export interface routeType {
@@ -62,12 +63,20 @@ const routes: routeType[] = [
   },
 
   {
+    path: "/area",
+    name: "Area",
+    component: AreaPage,
+    showNav: true,
+    showSide: true,
+    layout: "",
+  },
+  {
     path: "/desk",
     name: "Desk",
     component: DeskPage,
     showNav: true,
     showSide: true,
-    layout: "",
+    layout: "/area",
   },
   {
     path: "/add-desk",
@@ -75,7 +84,7 @@ const routes: routeType[] = [
     component: AddDeskPage,
     showNav: true,
     showSide: true,
-    layout: "/desk",
+    layout: "/area",
   },
   {
     path: "/room",

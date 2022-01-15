@@ -19,7 +19,7 @@ const routes: SidebarType[] = [
   {
     name: "Desk",
     icon: GiTable,
-    link: "/desk",
+    link: "/area",
     subNav: [],
   },
   {
@@ -67,18 +67,18 @@ const routes: SidebarType[] = [
   //     },
   //   ],
   // },
-  {
-    name: "Employee",
-    icon: FiUsers,
-    link: "/customer",
-    subNav: [],
-  },
-  {
-    name: "Report",
-    icon: FiBarChart2,
-    link: "/report",
-    subNav: [],
-  },
+  // {
+  //   name: "Employee",
+  //   icon: FiUsers,
+  //   link: "/customer",
+  //   subNav: [],
+  // },
+  // {
+  //   name: "Report",
+  //   icon: FiBarChart2,
+  //   link: "/report",
+  //   subNav: [],
+  // },
 ];
 
 export default routes;

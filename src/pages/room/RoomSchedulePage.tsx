@@ -169,26 +169,25 @@ const ScheduleRoomPage = () => {
       datetime: startDate.toLocaleString(),
       duration: duration,
     };
-    console.log(payload);
     const result = await RoomApi.scheduleRoom(payload);
-    console.log(result);
-    // if (result.status === 201) {
-    //   toast({
-    //     title: "Created Successfull!",
-    //     status: "success",
-    //     duration: 5000,
-    //     isClosable: true,
-    //   });
-    //   getAllRoom();
-    // } else {
-    //   toast({
-    //     title: "Something wrong...",
-    //     status: "error",
-    //     duration: 9000,
-    //     isClosable: true,
-    //   });
-    // }
-    // onCloseAddModal();
+    if (result.status === 201) {
+      toast({
+        title: "Scheduled Successfull!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      getAllRoom();
+    } else {
+      toast({
+        title: "Something wrong...",
+        description: result.data.msg,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    onCloseAddModal();
   };
   // const onEdit = async (payload: CreateRoomForm) => {
   //   const result = await RoomApi.editRoom(selectedRoom, payload);

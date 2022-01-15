@@ -3,8 +3,9 @@ export interface CreateAreaType {
   floorplan: File;
 }
 
-export interface AreaState {
+export interface AreaType {
   id: string;
   name: string;
-  address: string;
+  imagePath: string;
+  status: boolean;
 }
