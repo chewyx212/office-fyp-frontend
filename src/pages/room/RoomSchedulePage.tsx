@@ -39,11 +39,8 @@ import { RoomScheduleType, RoomType } from "types/RoomType";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
-
-interface form {
-  roomId: string;
-  duration: number;
-}
+import { timeList } from "assets/DUMMY";
+import moment from "moment";
 
 const ScheduleRoomPage = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -53,9 +50,11 @@ const ScheduleRoomPage = () => {
   const [roomScheduleList, setRoomScheduleList] = useState<RoomScheduleType[]>(
     []
   );
+
+  const [startTime, setStartTime] = useState<number>();
+  const [endTime, setEndTime] = useState<number>();
   const [roomList, setRoomList] = useState<RoomType[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<string>("");
-  const [duration, setDuration] = useState<number>(0);
   let cardColor = useColorModeValue("white", "gray.700");
   let borderColor = useColorModeValue("transparent", "gray.600");
   const history = useHistory();
@@ -156,61 +155,57 @@ const ScheduleRoomPage = () => {
     console.log(result);
     setSelectedRoom(id);
     setStartDate(new Date());
-    setDuration(0);
+    setStartTime(undefined);
+    setEndTime(undefined);
     if (result.status === 200 && result.data.length > 0) {
       // setScheduledTime(result.data);
     }
   };
+  const onSelectTime = (value: number, type: string) => {
+    if (type === "start") {
+      setStartTime(value);
+    } else {
+      setEndTime(value);
+    }
+  };
 
   const onSubmit = async () => {
-    const payload = {
+    console.log({
       roomId: selectedRoom,
       branchId: savedBranchs,
-      datetime: startDate.toLocaleString(),
-      duration: duration,
-    };
-    const result = await RoomApi.scheduleRoom(payload);
-    if (result.status === 201) {
-      toast({
-        title: "Scheduled Successfull!",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+      date: moment(startDate, "yyyy-MM-DD").toString(),
+      startTime,
+      endTime,
+    });
+    if (startTime && endTime) {
+      const result = await RoomApi.scheduleRoom({
+        roomId: selectedRoom,
+        branchId: savedBranchs,
+        date: moment(startDate, "yyyy-MM-DD").format("yyyy-MM-DD").toString(),
+        startTime,
+        endTime,
       });
-      getAllRoom();
-    } else {
-      toast({
-        title: "Something wrong...",
-        description: result.data.msg,
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
-    }
-    onCloseAddModal();
-  };
-  // const onEdit = async (payload: CreateRoomForm) => {
-  //   const result = await RoomApi.editRoom(selectedRoom, payload);
-  //   console.log(result);
-  //   if (result.status === 200) {
-  //     toast({
-  //       title: "Edit Successfull!",
-  //       status: "success",
-  //       duration: 5000,
-  //       isClosable: true,
-  //     });
-  //     getAllRoom();
-  //   } else {
-  //     toast({
-  //       title: "Something wrong...",
-  //       status: "error",
-  //       duration: 9000,
-  //       isClosable: true,
-  //     });
-  //   }
-  //   onCloseEditModal();
-  // };
 
+      if (result.status === 201) {
+        toast({
+          title: "Scheduled Successfull!",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        getAllRoomSchedule();
+        onCloseAddModal();
+      } else {
+        toast({
+          title: "Something wrong...",
+          description: result.data.msg,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    }
+  };
   return (
     <>
       {isLoading ? (
@@ -259,8 +254,9 @@ const ScheduleRoomPage = () => {
                     <Th>No</Th>
                     <Th>Room</Th>
                     <Th>User</Th>
-                    <Th>Date Time</Th>
-                    <Th>Duration</Th>
+                    <Th>Date</Th>
+                    <Th>Start Time</Th>
+                    <Th>End Time</Th>
                     <Th>Action</Th>
                   </Tr>
                 </Thead>
@@ -273,8 +269,9 @@ const ScheduleRoomPage = () => {
                             <Td>{index + 1}</Td>
                             <Td>{schedule.room.name}</Td>
                             <Td>{schedule.user.name}</Td>
-                            <Td>{schedule.datetime}</Td>
-                            <Td>{schedule.duration}</Td>
+                            <Td>{schedule.date}</Td>
+                            <Td>{schedule.startTime}</Td>
+                            <Td>{schedule.endTime}</Td>
                             <Td>
                               <Button
                                 fontSize="16px"
@@ -336,25 +333,48 @@ const ScheduleRoomPage = () => {
                   {selectedRoom && (
                     <>
                       <FormControl mt={4}>
-                        <FormLabel>Date & Time</FormLabel>
+                        <FormLabel>Date</FormLabel>
                         <DatePicker
                           selected={startDate}
                           onChange={(date) => handleOnCalenderChange(date)}
-                          showTimeSelect
                           filterTime={filterPassedTime}
-                          dateFormat="yyyy-MM-dd hh:mm"
+                          dateFormat="yyyy-MM-dd"
                         />
                       </FormControl>
                       <FormControl mt={5}>
-                        <FormLabel>Duration (in hour)</FormLabel>
-                        <Input
-                          type="number"
-                          placeholder="Duration"
-                          value={duration}
-                          onChange={(event) =>
-                            setDuration(parseFloat(event.target.value))
+                        <FormLabel>Start Time</FormLabel>
+                        <Select
+                          placeholder="Select Start Time"
+                          onChange={(e) =>
+                            onSelectTime(parseInt(e.target.value), "start")
                           }
-                        />
+                        >
+                          {timeList.map((time) => {
+                            return (
+                              <option key={time.id} value={time.id}>
+                                {time.time.format("HH:mm")}
+                              </option>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+
+                      <FormControl mt={5}>
+                        <FormLabel>End Time</FormLabel>
+                        <Select
+                          placeholder="Select End Time"
+                          onChange={(e) =>
+                            onSelectTime(parseInt(e.target.value), "end")
+                          }
+                        >
+                          {timeList.map((time) => {
+                            return (
+                              <option key={time.id} value={time.id}>
+                                {time.time.format("HH:mm")}
+                              </option>
+                            );
+                          })}
+                        </Select>
                       </FormControl>
                     </>
                   )}

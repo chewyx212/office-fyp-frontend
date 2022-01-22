@@ -8,4 +8,7 @@ export const authApi = {
   userRegister: async (payload: RegisterForm) => {
     return axios.post("/signup", payload);
   },
+  getDetail: async () => {
+    return axios.get("/company/detail");
+  },
 };

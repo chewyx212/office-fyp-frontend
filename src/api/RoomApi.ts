@@ -27,8 +27,9 @@ export const RoomApi = {
   scheduleRoom: async (payload: {
     roomId: string;
     branchId: string;
-    datetime: string;
-    duration: number;
+    date: string;
+    startTime: number;
+    endTime: number;
   }) => {
     return axios.post("room-schedule", payload);
   },

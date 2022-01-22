@@ -37,6 +37,12 @@ const routes: SidebarType[] = [
       },
     ],
   },
+  {
+    name: "Employee",
+    icon: FiUsers,
+    link: "/Employee",
+    subNav: [],
+  },
   // {
   //   name: "Room",
   //   icon: FiShoppingCart,

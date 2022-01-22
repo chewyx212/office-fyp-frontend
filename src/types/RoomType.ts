@@ -9,6 +9,7 @@ export interface RoomScheduleType {
   id: string;
   room: RoomType;
   user: UserInfoType;
-  datetime: Date;
-  duration: number;
+  date: Date;
+  startTime: number;
+  endTime: number;
 }

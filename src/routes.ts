@@ -5,9 +5,6 @@ import OnboardingPage from "pages/onboarding/OnboardingPage";
 import { FiHome, FiPackage, FiUsers } from "react-icons/fi";
 import { IconType } from "react-icons";
 import ProfilePage from "pages/profile/ProfilePage";
-import IntegrationPage from "pages/integration/IntegrationPage";
-import AddStorePage from "pages/integration/AddStorePage";
-import OrderSettingPage from "pages/settings/orderSetting/OrderSettingPage";
 import CustomerPage from "pages/customer/CustomerPage";
 import AddCustomerPage from "pages/customer/AddCustomerPage";
 import InventoryPage from "pages/inventory/InventoryPage";
@@ -18,6 +15,7 @@ import AddDeskPage from "pages/desk/AddDeskPage";
 import DeskPage from "pages/desk/DeskPage";
 import RoomPage from "pages/room/RoomPage";
 import RoomSchedulePage from "pages/room/RoomSchedulePage";
+import EmployeePage from "pages/employee/EmployeePage";
 export interface routeType {
   path: string;
   name: string;
@@ -103,19 +101,10 @@ const routes: routeType[] = [
     layout: "/room",
   },
 
-  // ADD STORE
   {
-    path: "/integration",
-    name: "Integration",
-    component: IntegrationPage,
-    showNav: true,
-    showSide: true,
-    layout: "",
-  },
-  {
-    path: "/add-store",
-    name: "Add Store",
-    component: AddStorePage,
+    path: "/employee",
+    name: "Employee",
+    component: EmployeePage,
     showNav: true,
     showSide: true,
     layout: "",
@@ -165,16 +154,6 @@ const routes: routeType[] = [
     path: "/report",
     name: "Report",
     component: SalesReportPage,
-    showNav: true,
-    showSide: true,
-    layout: "",
-  },
-
-  // SETTINGS
-  {
-    path: "/order-setting",
-    name: "Order Setting",
-    component: OrderSettingPage,
     showNav: true,
     showSide: true,
     layout: "",

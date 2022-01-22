@@ -24,6 +24,7 @@ import {
   Icon,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { authApi } from "api/AuthApi";
 import { BranchApi } from "api/BranchApi";
 import { CompanyApi } from "api/CompanyApi";
 import { StoreApi } from "api/StoreApi";
@@ -42,36 +43,43 @@ const DashboardPage = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   useEffect(() => {
-    getCompanyDetail();
-    getBranch();
+    getUserDetail();
   }, []);
 
-  const getCompanyDetail = async () => {
-    const result = await CompanyApi.getCompanyDetail();
+  const getUserDetail = async () => {
+    const result = await authApi.getDetail();
     console.log(result);
-    if (result.status === 200 && result.data) {
-      const company: CompanyState = {
-        size: result.data.size,
-        name: result.data.name,
-        id: result.data.id,
-        email: result.data.email,
-      };
-      console.log(company);
-      console.log("already got");
-      dispatch(saveCompany({ company }));
-    } else if (result.status === 200) {
-      history.push("/onboarding");
-    } else if (result.status === 401) {
-      dispatch(logout());
-    }
-  };
-  const getBranch = async () => {
-    const result = await BranchApi.getAllBranch();
-    if (result.status === 200 && result.data && result.data.length > 0) {
-      const branchs: BranchState[] = result.data;
-      console.log(branchs);
-      console.log("already got");
-      dispatch(saveCompanyBranch({ branchs }));
+    if (result && result.status === 200) {
+      let gotCompanyOrBranch = false;
+      let branchList: BranchState[] = [];
+      if (result.data.branches.length > 0) {
+        result.data.branches.forEach((branch: any) => {
+          if (branch.is_admin) {
+            branchList.push(branch.branch);
+          }
+        });
+      }
+      if (result.data.company && result.data.company.branches.length > 0) {
+        result.data.company.branches.forEach((branch: BranchState) => {
+          branchList.push(branch);
+        });
+        const company: CompanyState = {
+          size: result.data.company.size,
+          name: result.data.company.name,
+          id: result.data.company.id,
+          email: result.data.company.email,
+        };
+        dispatch(saveCompany({ company }));
+        gotCompanyOrBranch = true;
+      }
+      if (branchList.length > 0) {
+        gotCompanyOrBranch = true;
+        console.log(branchList)
+        dispatch(saveCompanyBranch({ branchs: branchList }));
+      }
+      if (!gotCompanyOrBranch) {
+        history.push("/onboarding");
+      }
     } else if (result.status === 401) {
       dispatch(logout());
     }
@@ -79,7 +87,7 @@ const DashboardPage = () => {
 
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "100px" }}>
-      <SimpleGrid mb="10" columns={{ sm: 1, md: 2, xl: 4 }} spacing="24px">
+      {/* <SimpleGrid mb="10" columns={{ sm: 1, md: 2, xl: 4 }} spacing="24px">
         <Box
           border="1px"
           borderColor={borderColor}
@@ -453,7 +461,7 @@ const DashboardPage = () => {
             </Tr>
           </Tbody>
         </Table>
-      </Box>
+      </Box> */}
     </Flex>
   );
 };
