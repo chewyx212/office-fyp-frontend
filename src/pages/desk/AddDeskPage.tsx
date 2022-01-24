@@ -10,6 +10,8 @@ import {
   Button,
   Switch,
   FormHelperText,
+  Heading,
+  useToast,
 } from "@chakra-ui/react";
 import { useAppDispatch } from "app/hooks";
 import { DeskApi } from "api/DeskApi";
@@ -57,7 +59,7 @@ const AddDeskPage = () => {
   const [markers, setMarkers] = useState<DeskType[]>([]);
   const [tempMarker, setTempMarker] = useState<DeskType>();
   const [value, setValue] = useState<DeskFormType>(initialDeskForm);
-
+  const toast = useToast();
   const { areaId } = location.state as {
     areaId: string;
   };
@@ -73,7 +75,16 @@ const AddDeskPage = () => {
       const result = await AreaApi.getOneArea(areaId);
       if (result.status === 200 && result.data) {
         setArea(result.data);
-
+        console.log(result.data);
+        setMarkers(
+          result.data.desks.map((desk: any) => ({
+            id: desk.id,
+            name: desk.name,
+            detail: desk.detail,
+            status: desk.status,
+            latlng: { lat: desk.lat, lng: desk.lng },
+          }))
+        );
         setIsLoading(true);
         const { width, height } = getMeta(result.data.imagePath);
         setBounds([
@@ -115,12 +126,19 @@ const AddDeskPage = () => {
         detail: value.detail,
         status: value.status,
       };
+      console.log(newDesk);
       const result = await DeskApi.createDesk(payload);
       if (result.status === 201 && result.data) {
         markers.push(newMark);
         setMarkers((prevValue) => [...prevValue, newMark]);
         setRequiredName(false);
         setValue(initialDeskForm);
+        toast({
+          title: "Created Successfull!",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
         console.log(popupRef.current._closeButton.click());
       }
     } else {
@@ -129,6 +147,19 @@ const AddDeskPage = () => {
   };
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "100px" }}>
+      <Flex direction="row" align="center">
+        <Button
+          colorScheme="blue"
+          size="md"
+          w="200px"
+          onClick={() => history.goBack()}
+        >
+          Back
+        </Button>
+        <Heading ml="5" as="h5" size="md">
+          Add Desk
+        </Heading>
+      </Flex>
       <Flex w="100%" h="100%">
         {area && (
           <MapContainer
@@ -184,7 +215,7 @@ const AddDeskPage = () => {
                       alignItems="center"
                     >
                       <FormLabel>Active?</FormLabel>
-                      <Switch isReadOnly size="md" checked={marker.status} />
+                      <Switch isReadOnly size="md" isChecked={marker.status} />
                     </FormControl>
                   </Flex>
                 </Popup>
@@ -226,7 +257,7 @@ const AddDeskPage = () => {
                       <FormLabel>Active?</FormLabel>
                       <Switch
                         size="md"
-                        checked={value.status}
+                        isChecked={value.status}
                         onChange={(e) =>
                           handleChange(e.target.checked, "status")
                         }

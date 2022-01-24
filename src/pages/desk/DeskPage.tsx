@@ -50,14 +50,7 @@ import { AreaApi } from "api/AreaApi";
 import { AreaType } from "types/AreaType";
 
 const DeskPage = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [gettingStart, setGettingStart] = useState<boolean>(false);
   const [openPreviewImage, setOpenPreviewImage] = useState<boolean>(false);
   const [deskList, setDeskList] = useState<any[]>([]);
   const [area, setArea] = useState<AreaType>();
@@ -71,17 +64,14 @@ const DeskPage = () => {
   const areaId = new URLSearchParams(history.location.search).get("areaId");
   useEffect(() => {
     getArea();
-    getAllDesk();
   }, []);
 
   const getAllDesk = async () => {
     setIsLoading(true);
     if (areaId) {
       const result = await DeskApi.getAllDesk(areaId);
-      console.log(result);
       if (result.status === 200 && result.data) {
         if (result.data.length > 0) {
-          setDeskList(result.data);
         }
       } else if (result.status === 200) {
         history.push("/onboarding");
@@ -103,6 +93,7 @@ const DeskPage = () => {
       console.log(result);
       if (result.status === 200 && result.data) {
         setArea(result.data);
+        setDeskList(result.data.desks)
       } else if (result.status === 200) {
         history.push("/onboarding");
       } else if (result.status === 401) {

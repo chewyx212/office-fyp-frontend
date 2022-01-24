@@ -11,9 +11,8 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router";
-import { CompanyApi } from "api/CompanyApi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppDispatch } from "app/hooks";
 import { logout } from "app/auth/authSlice";
@@ -29,7 +28,6 @@ const CreateBranchForm: React.FC<IProps> = ({ nextStep }) => {
   let cardColor = useColorModeValue("white", "gray.700");
 
   const toast = useToast();
-  const history = useHistory();
   const dispatch = useAppDispatch();
   const {
     handleSubmit,

@@ -74,7 +74,6 @@ const RoomPage = () => {
     console.log(savedBranchs);
     if (savedBranchs) {
       const result = await RoomApi.getAllRoom(savedBranchs);
-      console.log(result);
       if (result.status === 200 && result.data) {
         if (result.data.length > 0) {
           setRoomList(result.data);

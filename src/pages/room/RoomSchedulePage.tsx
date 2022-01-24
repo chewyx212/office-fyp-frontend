@@ -262,42 +262,53 @@ const ScheduleRoomPage = () => {
                 </Thead>
                 <Tbody>
                   {roomScheduleList.length > 0 &&
-                    roomScheduleList.map(
-                      (schedule: RoomScheduleType, index: number) => {
-                        return (
-                          <Tr key={schedule.id}>
-                            <Td>{index + 1}</Td>
-                            <Td>{schedule.room.name}</Td>
-                            <Td>{schedule.user.name}</Td>
-                            <Td>{schedule.date}</Td>
-                            <Td>{schedule.startTime}</Td>
-                            <Td>{schedule.endTime}</Td>
-                            <Td>
-                              <Button
-                                fontSize="16px"
-                                type="submit"
-                                bg="primary"
-                                h="45"
-                                color="white"
-                                _hover={{
-                                  bg: "blue.200",
-                                }}
-                                _active={{
-                                  bg: "blue.400",
-                                }}
-                                onClick={() => onOpenEditModal(schedule)}
-                              >
-                                <Icon
-                                  as={FiEdit2}
-                                  color="white"
-                                  fontSize="20px"
-                                />
-                              </Button>
-                            </Td>
-                          </Tr>
-                        );
+                    roomScheduleList.map((schedule: any, index: number) => {
+                      let start = timeList.find(
+                        (time) => time.id === schedule.startTime
+                      )?.time;
+                      let end = timeList.find(
+                        (time) => time.id === schedule.endTime
+                      )?.time;
+                      if (end) {
+                        schedule.end = end;
                       }
-                    )}
+                      if (start) {
+                        schedule.start = start;
+                      }
+                      return (
+                        <Tr key={schedule.id}>
+                          <Td>{index + 1}</Td>
+                          <Td>{schedule.room.name}</Td>
+                          <Td>{schedule.user.name}</Td>
+                          <Td>{schedule.date}</Td>
+
+                          <Td>{schedule.start.format("HH:mm")}</Td>
+                          <Td>{schedule.end.format("HH:mm")}</Td>
+                          <Td>
+                            <Button
+                              fontSize="16px"
+                              type="submit"
+                              bg="primary"
+                              h="45"
+                              color="white"
+                              _hover={{
+                                bg: "blue.200",
+                              }}
+                              _active={{
+                                bg: "blue.400",
+                              }}
+                              onClick={() => onOpenEditModal(schedule)}
+                            >
+                              <Icon
+                                as={FiEdit2}
+                                color="white"
+                                fontSize="20px"
+                              />
+                            </Button>
+                          </Td>
+                        </Tr>
+                      );
+                    })}
                 </Tbody>
               </Table>
             )}
@@ -321,13 +332,15 @@ const ScheduleRoomPage = () => {
                       placeholder="Select Room"
                       onChange={(e) => onSelectRoom(e.target.value)}
                     >
-                      {roomList.map((room) => {
-                        return (
-                          <option key={room.id} value={room.id}>
-                            {room.name}
-                          </option>
-                        );
-                      })}
+                      {roomList
+                        .filter((room) => room.status)
+                        .map((room) => {
+                          return (
+                            <option key={room.id} value={room.id}>
+                              {room.name}
+                            </option>
+                          );
+                        })}
                     </Select>
                   </FormControl>
                   {selectedRoom && (

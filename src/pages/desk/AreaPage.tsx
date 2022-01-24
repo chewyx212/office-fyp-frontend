@@ -68,7 +68,7 @@ const AreaPage = () => {
   const finalRef = useRef(null);
   const history = useHistory();
   const dispatch = useAppDispatch();
-  const toast = useToast()
+  const toast = useToast();
 
   const savedBranchs = useAppSelector((state) => state.company.selectedBranch);
   useEffect(() => {
@@ -155,63 +155,6 @@ const AreaPage = () => {
         </Flex>
       ) : areaList.length > 0 ? (
         <Flex flexDirection="column" pt={{ base: "120px", md: "100px" }}>
-          <SimpleGrid mb="10" columns={{ sm: 1, md: 2, xl: 4 }} spacing="24px">
-            <Box
-              border="1px"
-              borderColor={borderColor}
-              bg={cardColor}
-              minH="83px"
-              borderRadius="20px"
-              p="1.5rem"
-              boxShadow="0px 3.5px 5.5px rgba(0, 0, 0, 0.02)"
-            >
-              <Flex
-                flexDirection="row"
-                align="center"
-                justify="center"
-                w="100%"
-              >
-                <Stat me="auto">
-                  <StatLabel
-                    fontSize="sm"
-                    color="gray.400"
-                    fontWeight="bold"
-                    pb=".1rem"
-                  >
-                    Today's Occupancy
-                  </StatLabel>
-                  <Flex>
-                    <StatNumber fontSize="lg" color="blue-300" pr={2}>
-                      20/71
-                    </StatNumber>
-                    <StatHelpText
-                      alignSelf="flex-end"
-                      justifySelf="flex-end"
-                      m="0px"
-                      color="green.400"
-                      fontWeight="bold"
-                      ps="3px"
-                      fontSize="md"
-                    >
-                      55%
-                    </StatHelpText>
-                  </Flex>
-                </Stat>
-                <Box borderRadius="15px" h={"45px"} w={"45px"} bg="primary">
-                  <Flex justifyContent="center" alignItems="center">
-                    <Icon
-                      as={FiUser}
-                      color="white"
-                      h="24px"
-                      w="24px"
-                      mt="10px"
-                    />
-                  </Flex>
-                </Box>
-              </Flex>
-            </Box>
-          </SimpleGrid>
-
           <Flex direction="row" justify="space-between" align="center">
             <Heading as="h4" size="md">
               All Area List

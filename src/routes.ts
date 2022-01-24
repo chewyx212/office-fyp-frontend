@@ -16,6 +16,7 @@ import DeskPage from "pages/desk/DeskPage";
 import RoomPage from "pages/room/RoomPage";
 import RoomSchedulePage from "pages/room/RoomSchedulePage";
 import EmployeePage from "pages/employee/EmployeePage";
+import VisitorPage from "pages/visitor/VisitorLogPage";
 export interface routeType {
   path: string;
   name: string;
@@ -105,6 +106,14 @@ const routes: routeType[] = [
     path: "/employee",
     name: "Employee",
     component: EmployeePage,
+    showNav: true,
+    showSide: true,
+    layout: "",
+  },
+  {
+    path: "/visitor",
+    name: "Visitor",
+    component: VisitorPage,
     showNav: true,
     showSide: true,
     layout: "",

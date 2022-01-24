@@ -40,7 +40,14 @@ const routes: SidebarType[] = [
   {
     name: "Employee",
     icon: FiUsers,
-    link: "/Employee",
+    link: "/employee",
+    subNav: [],
+  },
+
+  {
+    name: "Visitor",
+    icon: FiUsers,
+    link: "/visitor",
     subNav: [],
   },
   // {
